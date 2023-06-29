@@ -1,0 +1,123 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  font-family: 'Open Sans', sans-serif;
+}
+:root {
+  --color-primary: #609ca7;
+  --color-bgHero: linear-gradient(
+    90deg,
+    rgba(219, 223, 227, 1) 0%,
+    rgba(152, 160, 168, 1) 100%
+  );
+  --color-font1: #ccc;
+  --color-note1: linear-gradient(
+    90deg,
+    rgba(64, 75, 93, 1) 0%,
+    rgba(46, 55, 70, 1) 100%
+  );
+  --color-note2: linear-gradient(
+    90deg,
+    rgba(96, 156, 167, 1) 0%,
+    rgba(71, 107, 116, 1) 100%
+  );
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+
+  padding: 5.5rem 1.5rem 1rem 1.5rem;
+  gap: 2rem;
+  background: var(--color-bgHero);
+  color: var(--color-font1);
+}
+
+.navBar {
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  top: 0;
+  width: 100%;
+  background: var(--color-primary);
+  z-index: 99;
+}
+
+.navBar .logo {
+  height: 100%;
+  width: 9rem;
+  max-width: 15rem;
+}
+
+.navBar .addNewNote {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-font1);
+  font-size: 2rem;
+  background: transparent;
+  outline: none;
+  border: none;
+  cursor: pointer;
+}
+
+.note {
+  display: flex;
+  height: 25rem;
+}
+
+.note .notes {
+  width: 25rem;
+  height: 25rem;
+  background: var(--color-note1);
+  box-shadow: 16px 16px 32px black;
+}
+.note .notes .tools {
+  display: flex;
+  justify-content: flex-end;
+  width: 25rem;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: var(--color-primary);
+  box-shadow: inset 20px 20px 60px #52858e, inset -20px -20px 60px #6eb3c0;
+}
+
+.note .notes .tools button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--color-font1);
+  cursor: pointer;
+}
+
+.note .notes .main {
+  height: 100%;
+  width: 100%;
+}
+
+.note .notes textarea {
+  max-width: 100%;
+  max-height: calc(100% - 2.5rem);
+  min-width: 100%;
+  min-height: calc(100% - 2.5rem);
+  border: none;
+  outline: none;
+  padding: 1rem;
+  background: transparent;
+  color: var(--color-font1);
+  text-align: justify;
+}
+
+.note .notes .hidden {
+  display: none;
+}
