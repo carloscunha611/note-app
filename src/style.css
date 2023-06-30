@@ -30,10 +30,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
-
-  padding: 5.5rem 1.5rem 1rem 1.5rem;
-  gap: 2rem;
+  flex-direction: column;
   background: var(--color-bgHero);
   color: var(--color-font1);
 }
@@ -45,15 +42,19 @@ body {
   align-items: center;
   padding: 1rem;
   top: 0;
+  height: 4rem;
   width: 100%;
   background: var(--color-primary);
   z-index: 99;
+  cursor: pointer;
+  user-select: none;
 }
 
 .navBar .logo {
   height: 100%;
   width: 9rem;
   max-width: 15rem;
+  object-fit: contain;
 }
 
 .navBar .addNewNote {
@@ -68,6 +69,24 @@ body {
   cursor: pointer;
 }
 
+.addNewNote:hover {
+  outline: 2px dotted var(--color-font1);
+  scale: 1.1;
+}
+
+.master {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 3rem 1rem;
+  margin-top: 4rem;
+  width: 100%;
+  height: 100%;
+}
+
 .note {
   display: flex;
   height: 25rem;
@@ -77,16 +96,17 @@ body {
   width: 25rem;
   height: 25rem;
   background: var(--color-note1);
-  box-shadow: 16px 16px 32px black;
+  box-shadow: 7px 7px 11px #525252, -7px -7px 11px #acacac;
 }
 .note .notes .tools {
+  position: absolute;
   display: flex;
   justify-content: flex-end;
   width: 25rem;
   gap: 0.5rem;
   padding: 0.5rem;
   background: var(--color-primary);
-  box-shadow: inset 20px 20px 60px #52858e, inset -20px -20px 60px #6eb3c0;
+  box-shadow: inset 20px 20px 60px #305f69, inset -20px -20px 60px #6eb3c0;
 }
 
 .note .notes .tools button {
@@ -100,24 +120,79 @@ body {
   cursor: pointer;
 }
 
+.tools button:hover {
+  outline: 2px dotted var(--color-font1);
+}
+
+.tools button [name='create']:hover,
+.tools button [name='trash']:hover {
+  scale: 1.1;
+}
+.tools button [name='trash']:hover,
+.tools button [name='trash']:active {
+  color: #dd2a2a;
+}
 .note .notes .main {
   height: 100%;
   width: 100%;
+  padding: 3rem 1rem 0.5rem 1.5rem;
+  font-size: 1rem;
+}
+
+.note .notes .main * li {
+  margin-left: 2rem;
 }
 
 .note .notes textarea {
-  max-width: 100%;
-  max-height: calc(100% - 2.5rem);
   min-width: 100%;
-  min-height: calc(100% - 2.5rem);
+  min-height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  font-size: 1rem;
   border: none;
   outline: none;
-  padding: 1rem;
+  padding: 3rem 1rem 0.5rem 1.5rem;
   background: transparent;
   color: var(--color-font1);
   text-align: justify;
+  outline: 0.3rem dotted var(--color-primary);
+  resize: none;
 }
 
+.notes textarea::placeholder {
+  font-size: 0.9rem;
+  color: #cccccc8e;
+}
 .note .notes .hidden {
   display: none;
+}
+
+footer {
+  position: fixed;
+
+  bottom: 0;
+  width: 100%;
+  background: transparent;
+}
+
+footer div {
+  background: var(--color-primary);
+  width: 100%;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+footer:hover div {
+  animation: hiddenFooter 0.5s ease forwards;
+}
+
+@keyframes hiddenFooter {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(40px);
+  }
 }

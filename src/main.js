@@ -1,5 +1,6 @@
 const addNewNoteBtn = document.querySelector('.addNewNote')
 const notes = JSON.parse(localStorage.getItem('notes'))
+const masterEl = document.querySelector('.master')
 
 if (notes) {
   notes.forEach(note => {
@@ -26,7 +27,9 @@ function newNote(text = '') {
       </button>
     </div>
     <div class="main ${text ? '' : 'hidden'}"></div>
-    <textarea class="${text ? 'hidden' : ''}"></textarea>
+    <textarea class="${
+      text ? 'hidden' : ''
+    }" placeholder="Digite aqui suas anotações.\nSuporta markdown, Exemplos:\n\n # Titulo 1 | ## Titulo 2 | - Lista | [Home]link | ---"></textarea>
   </section>
   `
   const editBtn = note.querySelector('.edit')
@@ -53,8 +56,7 @@ function newNote(text = '') {
     main.innerHTML = marked(value)
     updateLS()
   })
-
-  document.body.appendChild(note)
+  masterEl.appendChild(note)
 }
 
 function updateLS() {
@@ -67,3 +69,9 @@ function updateLS() {
 
   localStorage.setItem('notes', JSON.stringify(notes))
 }
+
+const logo = document.querySelector('.logo')
+
+logo.addEventListener('click', () => {
+  location.reload()
+})
