@@ -29,7 +29,7 @@ function newNote(text = '') {
     <div class="main ${text ? '' : 'hidden'}"></div>
     <textarea class="${
       text ? 'hidden' : ''
-    }" placeholder="Digite aqui suas anotações.\nSuporta markdown, Exemplos:\n\n # Titulo 1 | ## Titulo 2 | - Lista | [Home]link | ---"></textarea>
+    }" placeholder="Digite aqui suas anotações.\nSuporta markdown, Exemplos:\n\n # Titulo 1 | ## Titulo 2 | - Lista | [Home]link | <br> Quebrar linha | *Itálico* | **Negrito** | "></textarea>
   </section>
   `
   const editBtn = note.querySelector('.edit')
