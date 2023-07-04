@@ -9,7 +9,7 @@ function newNote(text = '') {
   note.innerHTML = `
     <div class="tools">
       <button class="edit">
-        <ion-icon name="create"></ion-icon>
+        <span>Salvar</span><ion-icon name="create"></ion-icon>
       </button>
       <button class="delete">
         <ion-icon name="trash"></ion-icon>
@@ -25,6 +25,7 @@ function newNote(text = '') {
   const deleteBtn = note.querySelector('.delete')
   const main = note.querySelector('.main')
   const textArea = note.querySelector('textarea')
+  const spanEdit = editBtn.querySelector('span')
 
   textArea.value = text
   main.innerHTML = marked(text)
@@ -32,6 +33,10 @@ function newNote(text = '') {
   editBtn.addEventListener('click', () => {
     main.classList.toggle('hidden')
     textArea.classList.toggle('hidden')
+
+    spanEdit.textContent = main.classList.contains('hidden')
+      ? 'Salvar'
+      : 'Editar'
   })
 
   deleteBtn.addEventListener('click', () => {

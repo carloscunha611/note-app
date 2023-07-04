@@ -173,6 +173,8 @@ body {
   justify-content: center;
   align-items: center;
   background: transparent;
+  text-align: center;
+  gap: 0.3rem;
   border: none;
   font-size: 1.5rem;
   color: var(--color-font1);
@@ -182,16 +184,18 @@ body {
 
 .note .tools button:hover {
   outline: 2px dotted var(--color-font1);
+  scale: 1.1;
+  color: #44e4f5;
 }
 
-.note .tools button [name='create']:hover,
-.note .tools button [name='trash']:hover {
-  transform: scale(1.1);
+.note .tools button span {
+  font-size: 0.8rem;
 }
 
 .note .tools button [name='trash']:hover,
 .note .tools button [name='trash']:active {
   color: #dd2a2a;
+  transition: all 0.3s;
 }
 
 .note .main {
