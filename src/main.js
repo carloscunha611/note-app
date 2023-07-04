@@ -1,23 +1,12 @@
 const addNewNoteBtn = document.querySelector('.addNewNote')
-const notes = JSON.parse(localStorage.getItem('notes'))
 const masterEl = document.querySelector('.master')
+const notes = JSON.parse(localStorage.getItem('notes')) || []
 
-if (notes) {
-  notes.forEach(note => {
-    newNote(note)
-  })
-}
-
-addNewNoteBtn.addEventListener('click', () => {
-  newNote()
-})
-
+// Função para criar uma nova nota
 function newNote(text = '') {
   const note = document.createElement('section')
-
-  note.classList.add('note')
+  note.classList.add('note', 'fade-in')
   note.innerHTML = `
-  <section class="notes">
     <div class="tools">
       <button class="edit">
         <ion-icon name="create"></ion-icon>
@@ -29,9 +18,9 @@ function newNote(text = '') {
     <div class="main ${text ? '' : 'hidden'}"></div>
     <textarea class="${
       text ? 'hidden' : ''
-    }" placeholder="Digite aqui suas anotações.\nSuporta markdown, Exemplos:\n\n # Titulo 1 | ## Titulo 2 | - Lista | [Home]link | <br> Quebrar linha | *Itálico* | **Negrito** | "></textarea>
-  </section>
+    }" placeholder="Digite aqui suas anotações.\nSuporta markdown, Exemplos:\n\n # Titulo 1 | ## Titulo 2 | - Lista | [Nome do site]link | *Itálico* | **Negrito** | <br> Quebrar linha"></textarea>
   `
+
   const editBtn = note.querySelector('.edit')
   const deleteBtn = note.querySelector('.delete')
   const main = note.querySelector('.main')
@@ -46,19 +35,37 @@ function newNote(text = '') {
   })
 
   deleteBtn.addEventListener('click', () => {
-    note.remove()
-    updateLS()
+    removeNote(note)
+
+    setTimeout(() => {
+      note.remove()
+      updateLS()
+    }, 300)
   })
 
   textArea.addEventListener('input', e => {
     const { value } = e.target
-
     main.innerHTML = marked(value)
     updateLS()
   })
+
   masterEl.appendChild(note)
+
+  setTimeout(() => {
+    note.classList.remove('fade-in')
+  }, 300)
 }
 
+function removeNote(note) {
+  note.classList.toggle('fade-out')
+
+  setTimeout(() => {
+    note.remove()
+    updateLS()
+  }, 300)
+}
+
+// Função para atualizar o armazenamento local
 function updateLS() {
   const notesTxt = document.querySelectorAll('textarea')
   const notes = []
@@ -70,8 +77,20 @@ function updateLS() {
   localStorage.setItem('notes', JSON.stringify(notes))
 }
 
-const logo = document.querySelector('.logo')
+// Carregar notas existentes do armazenamento local
+if (notes.length > 0) {
+  notes.forEach(note => {
+    newNote(note)
+  })
+}
 
+// Adicionar evento de clique ao botão de adicionar nova nota
+addNewNoteBtn.addEventListener('click', () => {
+  newNote()
+})
+
+// Adicionar evento de clique ao logo para recarregar a página
+const logo = document.querySelector('.logo')
 logo.addEventListener('click', () => {
   location.reload()
 })

@@ -6,6 +6,7 @@
   text-rendering: optimizeLegibility;
   font-family: 'Open Sans', sans-serif;
 }
+
 :root {
   --color-primary: #609ca7;
   --color-bgHero: linear-gradient(
@@ -26,13 +27,17 @@
   );
 }
 ::-webkit-scrollbar {
-  background: var(--color-bgHero);
   width: 0.5rem;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bgHero);
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--color-primaryG);
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-primary);
 }
@@ -57,7 +62,6 @@ body {
   width: 100%;
   background: var(--color-primaryG);
   z-index: 99;
-  cursor: pointer;
   user-select: none;
 }
 
@@ -66,6 +70,12 @@ body {
   width: 9rem;
   max-width: 15rem;
   object-fit: contain;
+  transition: 0.3s ease;
+  cursor: pointer;
+}
+
+.navBar .logo:hover {
+  transform: scale(1.1);
 }
 
 .navBar .addNewNote {
@@ -80,10 +90,11 @@ body {
   cursor: pointer;
 }
 
-.addNewNote:hover {
+.navBar .addNewNote:hover {
   outline: 2px dotted var(--color-font1);
-  scale: 1.1;
+  transform: scale(1.1);
 }
+
 .txt-newNote {
   position: absolute;
   top: 50%;
@@ -99,10 +110,10 @@ body {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
   flex-wrap: wrap;
   gap: 2rem;
-  padding: 3rem 1rem;
+  padding: 3rem 2.5rem;
   margin-top: 4rem;
   width: 100%;
   height: 85vh;
@@ -111,18 +122,41 @@ body {
 
 .note {
   display: flex;
-  height: 25rem;
-}
-
-.note .notes {
   width: 25rem;
   height: 25rem;
   text-align: justify;
   background: var(--color-note1);
   box-shadow: 7px 7px 11px #525252, -7px -7px 11px #acacac;
   overflow: hidden;
+  animation: all 0.3s ease-in-out;
 }
-.note .notes .tools {
+
+.note.fade-in {
+  animation-name: fade-in;
+  animation-fill-mode: forwards;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.note.fade-out {
+  animation-name: fade-out;
+  animation-fill-mode: forwards;
+}
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+.note .tools {
   position: absolute;
   display: flex;
   justify-content: flex-end;
@@ -134,7 +168,7 @@ body {
   z-index: 2;
 }
 
-.note .notes .tools button {
+.note .tools button {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -146,19 +180,21 @@ body {
   z-index: 2;
 }
 
-.tools button:hover {
+.note .tools button:hover {
   outline: 2px dotted var(--color-font1);
 }
 
-.tools button [name='create']:hover,
-.tools button [name='trash']:hover {
-  scale: 1.1;
+.note .tools button [name='create']:hover,
+.note .tools button [name='trash']:hover {
+  transform: scale(1.1);
 }
-.tools button [name='trash']:hover,
-.tools button [name='trash']:active {
+
+.note .tools button [name='trash']:hover,
+.note .tools button [name='trash']:active {
   color: #dd2a2a;
 }
-.note .notes .main {
+
+.note .main {
   height: 100%;
   width: 100%;
   padding: 3rem 1rem 0.5rem 1.5rem;
@@ -166,13 +202,12 @@ body {
   overflow: auto;
 }
 
-.note .notes .main * li {
+.note .main li {
   margin-left: 2rem;
 }
 
-.note .notes textarea {
+.note textarea {
   position: absolute;
-
   width: 25rem;
   height: 25em;
   font-size: 1rem;
@@ -186,12 +221,14 @@ body {
   outline: 0.2rem dotted var(--color-primary);
 }
 
-.notes textarea::placeholder {
+.note textarea::placeholder {
   font-size: 0.9rem;
   color: #cccccc8e;
 }
-.note .notes .hidden {
+
+.note .hidden {
   display: none;
+  opacity: 0;
 }
 
 footer {
@@ -204,15 +241,21 @@ footer {
   z-index: 3;
 }
 
+footer p {
+  font-size: 0.8rem;
+}
+
 footer a {
   position: absolute;
   display: flex;
   align-items: center;
+  justify-content: center;
   transition: all 0.3s ease;
+  left: 0.4rem;
 }
 
 footer a .logoC {
-  height: 2rem;
+  height: 1.5rem;
 }
 
 footer div {
@@ -231,6 +274,7 @@ footer:hover div {
 footer:hover a {
   background: var(--color-primaryG);
   border-left: 0.3rem solid var(--color-primary);
+  transform: scale(1.5);
 }
 
 @keyframes hiddenFooter {
@@ -244,29 +288,33 @@ footer:hover a {
 
 @media (max-width: 768px) {
   .master {
-    height: 100%;
+    padding: 1.5rem;
   }
-  .note .notes {
+
+  .note {
     height: 20.5rem;
     width: 20.5rem;
   }
 
-  .note .notes .tools {
+  .note .tools {
     width: 20.5rem;
   }
-  .note .notes textarea {
+
+  .note textarea {
     width: 20.5rem;
     height: 20.5rem;
     font-size: 1rem;
   }
 
-  footer {
-    font-size: 0.8rem;
-  }
   footer a {
     padding-left: 1rem;
   }
+
   footer div {
     padding: 1rem;
+  }
+
+  footer:hover div {
+    animation: none;
   }
 }
