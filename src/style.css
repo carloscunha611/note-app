@@ -230,7 +230,7 @@ body {
   color: #cccccc8e;
 }
 
-.note .hidden {
+.hidden {
   display: none;
   opacity: 0;
 }

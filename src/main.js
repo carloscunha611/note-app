@@ -1,6 +1,22 @@
 const addNewNoteBtn = document.querySelector('.addNewNote')
 const masterEl = document.querySelector('.master')
-const notes = JSON.parse(localStorage.getItem('notes')) || []
+const emptyStateEl = document.querySelector('.txt-newNote')
+
+function getStoredNotes() {
+  try {
+    const storedNotes = JSON.parse(localStorage.getItem('notes'))
+    return Array.isArray(storedNotes) ? storedNotes : []
+  } catch {
+    return []
+  }
+}
+
+const notes = getStoredNotes()
+
+function updateEmptyState() {
+  const hasNotes = masterEl.querySelectorAll('.note').length > 0
+  emptyStateEl.classList.toggle('hidden', hasNotes)
+}
 
 // Função para criar uma nova nota
 function newNote(text = '') {
@@ -29,6 +45,7 @@ function newNote(text = '') {
 
   textArea.value = text
   main.innerHTML = marked(text)
+  spanEdit.textContent = text ? 'Editar' : 'Salvar'
 
   editBtn.addEventListener('click', () => {
     main.classList.toggle('hidden')
@@ -37,15 +54,12 @@ function newNote(text = '') {
     spanEdit.textContent = main.classList.contains('hidden')
       ? 'Salvar'
       : 'Editar'
+
+    updateLS()
   })
 
   deleteBtn.addEventListener('click', () => {
     removeNote(note)
-
-    setTimeout(() => {
-      note.remove()
-      updateLS()
-    }, 300)
   })
 
   textArea.addEventListener('input', e => {
@@ -59,9 +73,15 @@ function newNote(text = '') {
   setTimeout(() => {
     note.classList.remove('fade-in')
   }, 300)
+
+  updateEmptyState()
 }
 
 function removeNote(note) {
+  if (note.classList.contains('fade-out')) {
+    return
+  }
+
   note.classList.toggle('fade-out')
 
   setTimeout(() => {
@@ -80,6 +100,7 @@ function updateLS() {
   })
 
   localStorage.setItem('notes', JSON.stringify(notes))
+  updateEmptyState()
 }
 
 // Carregar notas existentes do armazenamento local
