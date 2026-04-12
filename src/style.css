@@ -98,7 +98,8 @@ body {
 }
 
 .navBar .searchNotes,
-.navBar .sortNotes {
+.navBar .sortNotes,
+.navBar .formatMode {
   border: none;
   outline: none;
   padding: 0.45rem 0.65rem;

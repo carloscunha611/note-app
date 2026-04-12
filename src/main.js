@@ -7,6 +7,7 @@ const importNotesBtn = document.querySelector('.importNotes')
 const importFileInput = document.querySelector('#importFileInput')
 const searchNotesInput = document.querySelector('#searchNotes')
 const sortNotesSelect = document.querySelector('#sortNotes')
+const formatModeSelect = document.querySelector('#formatMode')
 const masterEl = document.querySelector('.master')
 const emptyStateEl = document.querySelector('.txt-newNote')
 const undoToastEl = document.querySelector('.undoToast')
@@ -15,7 +16,13 @@ const undoDeleteBtn = document.querySelector('.undoDeleteBtn')
 let notes = getStoredNotes()
 let searchQuery = ''
 let sortMode = 'updated_desc'
+let formatMode = getStoredFormatMode()
 let pendingDelete = null
+
+function getStoredFormatMode() {
+  const storedMode = localStorage.getItem('notes_format_mode')
+  return storedMode === 'markdown' ? 'markdown' : 'whatsapp'
+}
 
 function generateId() {
   return `note_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
@@ -129,6 +136,57 @@ function renderMarkdown(text) {
   const parsed =
     typeof marked.parse === 'function' ? marked.parse(text || '') : marked(text || '')
   return sanitizeMarkdownHtml(parsed)
+}
+
+function parseWhatsApp(text) {
+  if (!text) {
+    return ''
+  }
+
+  const placeholders = []
+  let processed = escapeAttr(text)
+
+  const pushPlaceholder = html => {
+    const id = `%%PLACEHOLDER_${placeholders.length}%%`
+    placeholders.push({ id, html })
+    return id
+  }
+
+  processed = processed.replace(/```([\s\S]*?)```/g, (_, content) => {
+    return pushPlaceholder(`<pre><code>${content.trim()}</code></pre>`)
+  })
+
+  processed = processed.replace(/`([^`\n]+)`/g, (_, content) => {
+    return pushPlaceholder(`<code>${content}</code>`)
+  })
+
+  processed = processed
+    .replace(/\*(\S(?:[\s\S]*?\S)?)\*/g, '<strong>$1</strong>')
+    .replace(/_(\S(?:[\s\S]*?\S)?)_/g, '<em>$1</em>')
+    .replace(/~(\S(?:[\s\S]*?\S)?)~/g, '<s>$1</s>')
+    .replace(/\n/g, '<br>')
+
+  placeholders.forEach(item => {
+    processed = processed.replace(item.id, item.html)
+  })
+
+  return processed
+}
+
+function renderText(text) {
+  if (formatMode === 'whatsapp') {
+    return sanitizeMarkdownHtml(parseWhatsApp(text))
+  }
+
+  return renderMarkdown(text)
+}
+
+function getEditorPlaceholder() {
+  if (formatMode === 'whatsapp') {
+    return 'Digite: *negrito* _itálico_ ~tachado~ `código`'
+  }
+
+  return 'Digite aqui suas anotações com markdown'
 }
 
 function escapeAttr(value) {
@@ -251,7 +309,7 @@ function createNoteElement(note) {
     </div>
     <input class="note-tags" maxlength="120" placeholder="Tags (separadas por vírgula)" value="${escapeAttr(note.tags.join(', '))}" aria-label="Tags da nota" />
     <div class="main"></div>
-    <textarea placeholder="Digite aqui suas anotações com markdown"></textarea>
+    <textarea placeholder="${getEditorPlaceholder()}"></textarea>
   `
 
   const main = noteEl.querySelector('.main')
@@ -263,7 +321,7 @@ function createNoteElement(note) {
   const pinBtn = noteEl.querySelector('.pin')
 
   textArea.value = note.content
-  main.innerHTML = renderMarkdown(note.content)
+  main.innerHTML = renderText(note.content)
   updateTimestamp(noteEl, note)
 
   setEditMode(noteEl, !note.content, note, {
@@ -281,7 +339,7 @@ function createNoteElement(note) {
       .slice(0, 10)
 
     note.updatedAt = Date.now()
-    main.innerHTML = renderMarkdown(note.content)
+    main.innerHTML = renderText(note.content)
     updateTimestamp(noteEl, note)
     persistNotes()
   }
@@ -504,6 +562,13 @@ function initEvents() {
 
   sortNotesSelect.addEventListener('change', event => {
     sortMode = event.target.value
+    renderNotes()
+  })
+
+  formatModeSelect.value = formatMode
+  formatModeSelect.addEventListener('change', event => {
+    formatMode = event.target.value === 'markdown' ? 'markdown' : 'whatsapp'
+    localStorage.setItem('notes_format_mode', formatMode)
     renderNotes()
   })
 
