@@ -178,10 +178,19 @@ function filteredNotes() {
 }
 
 function updateEmptyState() {
-  emptyStateEl.classList.toggle('hidden', filteredNotes().length > 0)
+  const hasVisibleNotes = filteredNotes().length > 0
+  emptyStateEl.classList.toggle('hidden', hasVisibleNotes)
+
+  if (!hasVisibleNotes && searchQuery.trim()) {
+    emptyStateEl.textContent = 'Nenhuma nota encontrada para essa busca.'
+    return
+  }
+
+  emptyStateEl.innerHTML = 'Clique no botão "<ion-icon name="add"></ion-icon>"'
 }
 
-function setEditMode(noteEl, isEditing, note) {
+function setEditMode(noteEl, isEditing, note, options = {}) {
+  const { rerenderOnSave = true, focusOnEdit = true } = options
   const main = noteEl.querySelector('.main')
   const textArea = noteEl.querySelector('textarea')
   const titleInput = noteEl.querySelector('.note-title')
@@ -199,8 +208,10 @@ function setEditMode(noteEl, isEditing, note) {
     note.updatedAt = Date.now()
     persistNotes()
     updateTimestamp(noteEl, note)
-    renderNotes()
-  } else {
+    if (rerenderOnSave) {
+      renderNotes()
+    }
+  } else if (focusOnEdit) {
     textArea.focus()
   }
 }
@@ -255,7 +266,10 @@ function createNoteElement(note) {
   main.innerHTML = renderMarkdown(note.content)
   updateTimestamp(noteEl, note)
 
-  setEditMode(noteEl, !note.content, note)
+  setEditMode(noteEl, !note.content, note, {
+    rerenderOnSave: false,
+    focusOnEdit: false,
+  })
 
   const updateNoteFromFields = () => {
     note.title = titleInput.value.trim()
@@ -329,6 +343,8 @@ function createNote() {
 
   notes.unshift(newNote)
   persistNotes()
+  searchQuery = ''
+  searchNotesInput.value = ''
   renderNotes()
 }
 
@@ -374,7 +390,8 @@ function undoDelete() {
   }
 
   clearTimeout(pendingDelete.timeoutId)
-  notes.splice(pendingDelete.index, 0, pendingDelete.note)
+  const restoredIndex = Math.min(pendingDelete.index, notes.length)
+  notes.splice(restoredIndex, 0, pendingDelete.note)
   pendingDelete = null
   undoToastEl.classList.add('hidden')
   persistNotes()
@@ -423,7 +440,18 @@ async function importNotesFromFile(file) {
       'Deseja substituir as notas atuais pelas importadas? Clique em Cancelar para mesclar.'
     )
 
-    notes = shouldReplace ? importedNotes : [...importedNotes, ...notes]
+    const mergedNotes = shouldReplace ? importedNotes : [...importedNotes, ...notes]
+    const dedupedById = new Map()
+
+    mergedNotes.forEach(note => {
+      const existing = dedupedById.get(note.id)
+
+      if (!existing || existing.updatedAt < note.updatedAt) {
+        dedupedById.set(note.id, note)
+      }
+    })
+
+    notes = Array.from(dedupedById.values())
     persistNotes()
     renderNotes()
   } catch {
