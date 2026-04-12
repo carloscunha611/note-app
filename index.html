@@ -19,14 +19,50 @@
   <body>
     <nav class="navBar">
       <img class="logo" src="./src/assets/logo.png" alt="Logo" />
-      <button class="addNewNote">
-        <ion-icon name="add"></ion-icon>
-      </button>
+      <div class="navActions">
+        <label class="sr-only" for="searchNotes">Buscar notas</label>
+        <input
+          id="searchNotes"
+          class="searchNotes"
+          type="search"
+          placeholder="Buscar notas..."
+          aria-label="Buscar notas"
+        />
+        <label class="sr-only" for="sortNotes">Ordenar notas</label>
+        <select id="sortNotes" class="sortNotes" aria-label="Ordenar notas">
+          <option value="updated_desc">Mais recentes</option>
+          <option value="updated_asc">Mais antigas</option>
+          <option value="created_desc">Criação recente</option>
+          <option value="title_asc">Título A-Z</option>
+        </select>
+        <button class="exportNotes" aria-label="Exportar notas">
+          <ion-icon name="download-outline"></ion-icon>
+        </button>
+        <button class="importNotes" aria-label="Importar notas">
+          <ion-icon name="cloud-upload-outline"></ion-icon>
+        </button>
+        <input
+          id="importFileInput"
+          class="hidden"
+          type="file"
+          accept="application/json"
+          aria-label="Escolher arquivo JSON para importar"
+        />
+        <button class="addNewNote" aria-label="Criar nova nota">
+          <ion-icon name="add"></ion-icon>
+        </button>
+      </div>
     </nav>
     <p class="txt-newNote">
       Clique no botão "<ion-icon name="add"></ion-icon>"
     </p>
     <main class="master"></main>
+    <aside class="undoToast hidden" role="status" aria-live="polite">
+      <p>Nota removida.</p>
+      <button class="undoDeleteBtn" aria-label="Desfazer exclusão">
+        Desfazer
+      </button>
+    </aside>
     <footer>
       <a href="https://carloscunha611.github.io/portfolio/" target="_blank">
         <img
