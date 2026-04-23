@@ -147,24 +147,35 @@ function parseWhatsApp(text) {
   let processed = escapeAttr(text)
 
   const pushPlaceholder = html => {
-    const id = `%%PLACEHOLDER_${placeholders.length}%%`
+    const id = `__PH_${Date.now()}_${placeholders.length}_${Math.random()
+      .toString(36)
+      .slice(2, 8)}__`
     placeholders.push({ id, html })
     return id
   }
 
   processed = processed.replace(/```([\s\S]*?)```/g, (_, content) => {
-    return pushPlaceholder(`<pre><code>${content.trim()}</code></pre>`)
+    return pushPlaceholder(`<pre><code>${content}</code></pre>`)
   })
 
   processed = processed.replace(/`([^`\n]+)`/g, (_, content) => {
     return pushPlaceholder(`<code>${content}</code>`)
   })
 
-  processed = processed
-    .replace(/\*(\S(?:[\s\S]*?\S)?)\*/g, '<strong>$1</strong>')
-    .replace(/_(\S(?:[\s\S]*?\S)?)_/g, '<em>$1</em>')
-    .replace(/~(\S(?:[\s\S]*?\S)?)~/g, '<s>$1</s>')
-    .replace(/\n/g, '<br>')
+  const applyDelimitedStyle = (input, delimiter, tagName) => {
+    const escapedDelimiter = delimiter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const regex = new RegExp(
+      `(^|[\\s([{])${escapedDelimiter}([^${escapedDelimiter}\\n](?:[\\s\\S]*?[^${escapedDelimiter}\\n])?)${escapedDelimiter}(?=$|[\\s)\\]}.!?;:,])`,
+      'gm'
+    )
+
+    return input.replace(regex, `$1<${tagName}>$2</${tagName}>`)
+  }
+
+  processed = applyDelimitedStyle(processed, '*', 'strong')
+  processed = applyDelimitedStyle(processed, '_', 'em')
+  processed = applyDelimitedStyle(processed, '~', 's')
+  processed = processed.replace(/\n/g, '<br>')
 
   placeholders.forEach(item => {
     processed = processed.replace(item.id, item.html)
